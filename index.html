@@ -10,23 +10,15 @@
     <style>
       :root { --thy-red: #CC0000; }
       body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
+      
+      /* THY Header */
       #header {
         position: fixed; top: 0; width: 100%; height: 60px;
         background: white; display: flex; align-items: center;
         justify-content: center; z-index: 100; border-bottom: 3px solid var(--thy-red);
       }
-      #overlay {
-        position: fixed; inset: 0; background: var(--thy-red);
-        display: flex; flex-direction: column; align-items: center;
-        justify-content: center; z-index: 1000; color: white; text-align: center;
-        padding: 20px;
-      }
-      .start-btn {
-        margin-top: 25px; padding: 18px 50px; background: white;
-        color: var(--thy-red); border: none; border-radius: 40px;
-        font-weight: bold; font-size: 1.2em; cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      }
+
+      /* Fly To Cairo Butonu */
       #buy-ticket-btn {
         position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
         padding: 16px 40px; background: var(--thy-red); color: white;
@@ -35,26 +27,29 @@
         box-shadow: 0 8px 25px rgba(0,0,0,0.5); font-size: 1.1em;
         white-space: nowrap;
       }
+
+      /* Dokunma Uyarısı (Sesi açmak için) */
+      #tap-for-sound {
+        position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.6); color: white; padding: 8px 20px;
+        border-radius: 20px; font-size: 0.9em; z-index: 150;
+        pointer-events: none; transition: opacity 0.5s;
+      }
     </style>
   </head>
 
-  <body>
+  <body onclick="enableSound()">
     <div id="header">
       <img src="logo.png" style="height: 40px;" alt="THY Logo">
     </div>
 
-    <div id="overlay">
-      <img src="logo.png" style="width: 130px; filter: brightness(0) invert(1);" alt="THY">
-      <h2 style="margin: 25px 0 10px; font-size: 1.8em;">Giza Piramitleri</h2>
-      <p style="font-size: 1.1em; opacity: 0.9;">Deneyimi başlatmak için butona basın ve<br>kamerayı panoya tutun.</p>
-      <button class="start-btn" onclick="startExperience()">BAŞLAT</button>
-    </div>
+    <div id="tap-for-sound">Sesi açmak için ekrana dokunun 🔊</div>
 
     <a href="https://www.turkishairlines.com/en-int/flights/flights-to-cairo/" 
        target="_blank" id="buy-ticket-btn">FLY TO CAIRO ✈️</a>
 
     <a-scene 
-      mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: yes; filterMinCF: 0.0001; filterBeta: 0.001;" 
+      mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes; filterMinCF: 0.0001; filterBeta: 0.001;" 
       color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false">
@@ -71,28 +66,28 @@
     </a-scene>
 
     <script>
-      function startExperience() {
-        const video = document.querySelector('#giza-video');
-        const scene = document.querySelector('a-scene');
-        const ticketBtn = document.getElementById('buy-ticket-btn');
-        
-        document.getElementById('overlay').style.display = 'none';
+      const video = document.querySelector('#giza-video');
+      const ticketBtn = document.getElementById('buy-ticket-btn');
+      const targetEntity = document.querySelector('#target-entity');
+      const soundTip = document.getElementById('tap-for-sound');
 
+      // Kullanıcı ekrana dokunduğunda sesi aktif et
+      function enableSound() {
+        video.muted = false;
+        soundTip.style.opacity = '0';
+        // Video o an oynuyorsa sesi anında gelsin
         video.play();
-        scene.systems["mindar-image-system"].start();
-
-        const targetEntity = document.querySelector('#target-entity');
-        
-        targetEntity.addEventListener("targetFound", () => {
-          video.play();
-          video.muted = false; 
-          ticketBtn.style.display = 'block';
-        });
-        
-        targetEntity.addEventListener("targetLost", () => {
-          ticketBtn.style.display = 'none';
-        });
       }
+
+      targetEntity.addEventListener("targetFound", () => {
+        video.play();
+        ticketBtn.style.display = 'block';
+      });
+      
+      targetEntity.addEventListener("targetLost", () => {
+        video.pause();
+        ticketBtn.style.display = 'none';
+      });
     </script>
   </body>
 </html>
