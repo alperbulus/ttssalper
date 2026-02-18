@@ -1,89 +1,107 @@
 <!DOCTYPE html>
 <html lang="tr">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>THY WebAR - Giza Stable</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    
     <style>
-      :root { --thy-red: #CC0000; }
-      body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
-      #header {
-        position: fixed; top: 0; width: 100%; height: 60px;
-        background: white; display: flex; align-items: center;
-        justify-content: center; z-index: 100; border-bottom: 3px solid var(--thy-red);
-      }
-      #overlay {
-        position: fixed; inset: 0; background: var(--thy-red);
-        display: flex; flex-direction: column; align-items: center;
-        justify-content: center; z-index: 1000; color: white; text-align: center;
-        padding: 20px;
-      }
-      .start-btn {
-        margin-top: 25px; padding: 18px 50px; background: white;
-        color: var(--thy-red); border: none; border-radius: 40px;
-        font-weight: bold; font-size: 1.2em; cursor: pointer;
-      }
-      #buy-ticket-btn {
-        position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-        padding: 16px 40px; background: var(--thy-red); color: white;
-        border-radius: 40px; font-weight: bold; text-decoration: none;
-        display: none; z-index: 200; border: 2px solid white;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.5); font-size: 1.1em;
-      }
+        :root { --thy-red: #CC0000; }
+        body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
+        #header {
+            position: fixed; top: 0; width: 100%; height: 60px;
+            background: white; display: flex; align-items: center;
+            justify-content: center; z-index: 100; border-bottom: 3px solid var(--thy-red);
+        }
+        #overlay {
+            position: fixed; inset: 0; background: var(--thy-red);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 2000; color: white; text-align: center;
+            padding: 20px;
+        }
+        .start-btn {
+            margin-top: 25px; padding: 18px 50px; background: white;
+            color: var(--thy-red); border: none; border-radius: 40px;
+            font-weight: bold; font-size: 1.2em; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        #buy-ticket-btn {
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            padding: 16px 40px; background: var(--thy-red); color: white;
+            border-radius: 40px; font-weight: bold; text-decoration: none;
+            display: none; z-index: 200; border: 2px solid white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); font-size: 1.1em;
+        }
     </style>
-  </head>
+</head>
+<body>
 
-  <body>
     <div id="header"><img src="logo.png" style="height: 40px;"></div>
 
     <div id="overlay">
-      <img src="logo.png" style="width: 130px; filter: brightness(0) invert(1);">
-      <h2 style="margin: 25px 0 10px; font-size: 1.8em;">Giza Piramitleri</h2>
-      <p style="font-size: 1.1em; opacity: 0.9;">Kamerayı panoya tutarak deneyimi başlatın.</p>
-      <button class="start-btn" onclick="startExperience()">BAŞLAT</button>
+        <img src="logo.png" style="width: 130px; filter: brightness(0) invert(1);">
+        <h2 style="margin: 25px 0 10px; font-size: 1.8em;">Giza Piramitleri</h2>
+        <p style="font-size: 1.1em; opacity: 0.9;">Kamerayı panoya tutarak<br>eşsiz dünyayı keşfedin.</p>
+        <button class="start-btn" id="start-btn">BAŞLAT</button>
     </div>
 
     <a href="https://www.turkishairlines.com/en-int/flights/flights-to-cairo/" 
        target="_blank" id="buy-ticket-btn">FLY TO CAIRO ✈️</a>
 
     <a-scene 
-      mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: yes; filterMinCF: 0.0001; filterBeta: 0.001;" 
-      embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
-      vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-      
-      <a-assets>
-        <video id="giza-video" src="giza.mp4" preload="auto" loop playsinline webkit-playsinline muted></video>
-      </a-assets>
+        mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: yes; filterMinCF: 0.0001; filterBeta: 0.001;" 
+        embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
+        vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        
+        <a-assets>
+            <video id="giza-video" src="giza.mp4" 
+                   preload="auto" loop playsinline webkit-playsinline muted 
+                   crossorigin="anonymous"></video>
+        </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity mindar-image-target="targetIndex: 0" id="target-entity">
-        <a-video src="#giza-video" width="1" height="0.5625" position="0 0 0" scale="1.05 1.05 1.05"></a-video>
-      </a-entity>
+        <a-entity id="giza-target" mindar-image-target="targetIndex: 0">
+            <a-video src="#giza-video" width="1" height="0.5625" position="0 0 0" scale="1.05 1.05 1.05"></a-video>
+        </a-entity>
     </a-scene>
 
     <script>
-      function startExperience() {
+        const btn = document.querySelector('#buy-ticket-btn');
         const video = document.querySelector('#giza-video');
+        const target = document.querySelector('#giza-target');
+        const startBtn = document.querySelector('#start-btn');
+        const overlay = document.querySelector('#overlay');
         const scene = document.querySelector('a-scene');
-        const ticketBtn = document.getElementById('buy-ticket-btn');
-        document.getElementById('overlay').style.display = 'none';
-        video.play();
-        scene.systems["mindar-image-system"].start();
 
-        const targetEntity = document.querySelector('#target-entity');
-        targetEntity.addEventListener("targetFound", () => {
-          video.play();
-          video.muted = false; 
-          ticketBtn.style.display = 'block';
+        // VIDEO FIX: Kullanıcı etkileşimi ile videoyu önceden uyandırıyoruz
+        startBtn.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            
+            // Bu kısım kritik: Videoyu bir kez oynat-dur yapıyoruz ki tarayıcı kilidini açsın
+            video.load();
+            video.play().then(() => {
+                video.pause();
+                // Video uyandıktan sonra AR sistemini başlatıyoruz
+                scene.systems["mindar-image-system"].start();
+            }).catch(e => {
+                console.log("Video başlatma hatası, sessiz modda devam ediliyor.");
+                scene.systems["mindar-image-system"].start();
+            });
         });
-        targetEntity.addEventListener("targetLost", () => {
-          ticketBtn.style.display = 'none';
+
+        target.addEventListener("targetFound", () => {
+            console.log("Görsel bulundu, video başlatılıyor...");
+            video.muted = false; // Kullanıcı butona bastığı için sesi açabiliriz
+            video.play().catch(e => video.play()); // Hata alsa bile tekrar dene
+            btn.style.display = "block";
         });
-      }
+
+        target.addEventListener("targetLost", () => {
+            video.pause();
+            btn.style.display = "none";
+        });
     </script>
-  </body>
+</body>
 </html>
