@@ -10,30 +10,23 @@
     <style>
       :root { --thy-red: #CC0000; }
       body { margin: 0; overflow: hidden; font-family: sans-serif; background: #000; }
-      
-      /* THY Header */
       #header {
         position: fixed; top: 0; width: 100%; height: 60px;
         background: white; display: flex; align-items: center;
         justify-content: center; z-index: 100; border-bottom: 3px solid var(--thy-red);
       }
-
-      /* Giriş Ekranı */
       #overlay {
         position: fixed; inset: 0; background: var(--thy-red);
         display: flex; flex-direction: column; align-items: center;
         justify-content: center; z-index: 1000; color: white; text-align: center;
         padding: 20px;
       }
-      
       .start-btn {
         margin-top: 25px; padding: 18px 50px; background: white;
         color: var(--thy-red); border: none; border-radius: 40px;
         font-weight: bold; font-size: 1.2em; cursor: pointer;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       }
-
-      /* Fly To Cairo Butonu */
       #buy-ticket-btn {
         position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
         padding: 16px 40px; background: var(--thy-red); color: white;
@@ -61,7 +54,7 @@
        target="_blank" id="buy-ticket-btn">FLY TO CAIRO ✈️</a>
 
     <a-scene 
-      mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: yes;" 
+      mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: yes; filterMinCF: 0.0001; filterBeta: 0.001;" 
       color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false">
