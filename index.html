@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>THY WebAR - Giza Mobile</title>
+    <title>THY WebAR - Giza</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
@@ -18,35 +18,28 @@
         justify-content: center; z-index: 100; border-bottom: 3px solid var(--thy-red);
       }
 
-      /* Fly To Cairo Butonu */
+      /* Fly To Cairo Butonu (Emoji Kaldırıldı) */
       #buy-ticket-btn {
         position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-        padding: 16px 40px; background: var(--thy-red); color: white;
+        padding: 16px 45px; background: var(--thy-red); color: white;
         border-radius: 40px; font-weight: bold; text-decoration: none;
         display: none; z-index: 200; border: 2px solid white;
         box-shadow: 0 8px 25px rgba(0,0,0,0.5); font-size: 1.1em;
-        white-space: nowrap;
+        letter-spacing: 1px;
       }
 
-      /* Dokunma Uyarısı (Sesi açmak için) */
-      #tap-for-sound {
-        position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
-        background: rgba(0,0,0,0.6); color: white; padding: 8px 20px;
-        border-radius: 20px; font-size: 0.9em; z-index: 150;
-        pointer-events: none; transition: opacity 0.5s;
-      }
+      /* VR Butonunu CSS ile de garantiye alalım */
+      .a-enter-vr { display: none !important; }
     </style>
   </head>
 
-  <body onclick="enableSound()">
+  <body>
     <div id="header">
       <img src="logo.png" style="height: 40px;" alt="THY Logo">
     </div>
 
-    <div id="tap-for-sound">Sesi açmak için ekrana dokunun 🔊</div>
-
     <a href="https://www.turkishairlines.com/en-int/flights/flights-to-cairo/" 
-       target="_blank" id="buy-ticket-btn">FLY TO CAIRO ✈️</a>
+       target="_blank" id="buy-ticket-btn">FLY TO CAIRO</a>
 
     <a-scene 
       mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes; filterMinCF: 0.0001; filterBeta: 0.001;" 
@@ -58,7 +51,7 @@
         <video id="giza-video" src="giza.mp4" preload="auto" loop="true" playsinline webkit-playsinline muted></video>
       </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="far: 10000; objects: .clickable"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0" id="target-entity">
         <a-video src="#giza-video" width="1" height="0.5625" position="0 0 0" scale="1.1 1.1 1.1"></a-video>
@@ -69,15 +62,6 @@
       const video = document.querySelector('#giza-video');
       const ticketBtn = document.getElementById('buy-ticket-btn');
       const targetEntity = document.querySelector('#target-entity');
-      const soundTip = document.getElementById('tap-for-sound');
-
-      // Kullanıcı ekrana dokunduğunda sesi aktif et
-      function enableSound() {
-        video.muted = false;
-        soundTip.style.opacity = '0';
-        // Video o an oynuyorsa sesi anında gelsin
-        video.play();
-      }
 
       targetEntity.addEventListener("targetFound", () => {
         video.play();
