@@ -1,111 +1,99 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>THY WebAR - Giza Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>THY WebAR Test - Giza</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
     <style>
-        :root { --thy-red: #CC0000; }
-        body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000; }
-        
-        /* Mobil Header */
-        #header {
-            position: fixed; top: 0; width: 100%; height: 60px;
-            background: white; display: flex; align-items: center;
-            justify-content: center; z-index: 100; border-bottom: 3px solid var(--thy-red);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+      :root { --thy-red: #CC0000; }
+      body { margin: 0; overflow: hidden; font-family: sans-serif; }
+      
+      /* THY Üst Menü */
+      #header {
+        position: fixed; top: 0; width: 100%; height: 50px;
+        background: white; display: flex; align-items: center;
+        justify-content: center; z-index: 10; border-bottom: 2px solid var(--thy-red);
+      }
 
-        /* Başlangıç Ekranı - Mobil İzin Tetikleyici */
-        #start-overlay {
-            position: fixed; inset: 0; background: var(--thy-red);
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; z-index: 2000; color: white; text-align: center;
-            padding: 0 30px;
-        }
-        .cta-btn {
-            margin-top: 30px; padding: 18px 50px; background: white;
-            color: var(--thy-red); border: none; border-radius: 40px;
-            font-weight: 800; font-size: 1.2rem; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            -webkit-tap-highlight-color: transparent;
-        }
+      /* Giriş ve Onay Ekranı (iOS için Zorunlu) */
+      #overlay {
+        position: fixed; inset: 0; background: var(--thy-red);
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: center; z-index: 1000; color: white; text-align: center;
+        padding: 20px;
+      }
+      
+      .start-btn {
+        margin-top: 25px; padding: 15px 45px; background: white;
+        color: var(--thy-red); border: none; border-radius: 30px;
+        font-weight: bold; font-size: 1.1em; cursor: pointer;
+      }
 
-        /* Alt Buton - Buy Ticket */
-        #buy-ticket-btn {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
-            padding: 16px 40px; background: var(--thy-red); color: white;
-            border-radius: 40px; font-weight: bold; text-decoration: none;
-            display: none; z-index: 100; border: 2px solid white;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.5); font-size: 1.1rem;
-            white-space: nowrap; transition: all 0.3s ease;
-        }
+      /* Kamera İzni Bekleme Mesajı */
+      #loading-msg {
+        position: fixed; bottom: 20px; width: 100%; text-align: center;
+        color: white; z-index: 1; text-shadow: 1px 1px 3px black;
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
 
-    <div id="start-overlay">
-        <img src="logo.png" style="width: 140px; filter: brightness(0) invert(1); margin-bottom: 10px;">
-        <h1 style="font-size: 1.8rem; margin-bottom: 10px;">KAHİRE'Yİ KEŞFET</h1>
-        <p style="font-size: 1.1rem; opacity: 0.9;">Deneyimi başlatmak için kameranıza izin verin ve panodaki görsele tutun.</p>
-        <button class="cta-btn" id="start-btn">BAŞLAT</button>
+  <body>
+    <div id="header">
+      <img src="logo.png" style="height: 35px;" alt="Turkish Airlines Logo">
     </div>
 
-    <div id="header"><img src="logo.png" style="height: 40px;"></div>
-    
-    <a href="https://www.turkishairlines.com/en-int/flights/flights-to-cairo/" 
-       target="_blank" id="buy-ticket-btn">FLY TO CAIRO ✈️</a>
+    <div id="overlay">
+      <img src="logo.png" style="width: 100px; filter: brightness(0) invert(1);" alt="THY">
+      <h2 style="margin: 20px 0 10px;">Giza Piramitleri</h2>
+      <p>Kamerayı panodaki Giza görseline tutarak<br>videoyu izleyebilirsiniz.</p>
+      <button class="start-btn" onclick="startExperience()">DENEYİMİ BAŞLAT</button>
+    </div>
+
+    <div id="loading-msg">Görsel aranıyor...</div>
 
     <a-scene 
-        mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiScanning: yes; filterMinCF:0.0001; filterBeta: 0.001;" 
-        embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
-        vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-        
-        <a-assets>
-            <video id="giza-vid" src="giza.mp4" 
-                   preload="auto" loop playsinline webkit-playsinline muted 
-                   crossorigin="anonymous"></video>
-        </a-assets>
+      mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: yes;" 
+      color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
+      vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      
+      <a-assets>
+        <video id="giza-video" src="giza.mp4" preload="auto" loop="true" playsinline webkit-playsinline muted></video>
+      </a-assets>
 
-        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <a-entity id="giza-target" mindar-image-target="targetIndex: 0">
-            <a-video src="#giza-vid" width="1" height="0.5625" position="0 0 0" scale="1.1 1.1 1.1"></a-video>
-        </a-entity>
+      <a-entity mindar-image-target="targetIndex: 0" id="target-entity">
+        <a-video src="#giza-video" width="1" height="0.5625" position="0 0 0" rotation="0 0 0"></a-video>
+      </a-entity>
     </a-scene>
 
     <script>
-        const btn = document.querySelector('#buy-ticket-btn');
-        const video = document.querySelector('#giza-vid');
-        const target = document.querySelector('#giza-target');
-        const overlay = document.querySelector('#start-overlay');
-        const startBtn = document.querySelector('#start-btn');
+      function startExperience() {
+        const video = document.querySelector('#giza-video');
         const scene = document.querySelector('a-scene');
+        
+        // 1. Overlay'i kaldır
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('loading-msg').style.display = 'block';
 
-        startBtn.addEventListener('click', () => {
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
-            
-            // Kritik: Kullanıcı dokunduğu anda videoyu yükle ve kısa bir oynat-dur yap
-            video.load();
-            video.play().then(() => {
-                video.pause(); // Görsel bulunana kadar bekle
-            }).catch(err => console.error("Video hatası:", err));
-            
-            scene.systems["mindar-image-system"].start();
-        });
+        // 2. Videoyu ve AR'ı başlat
+        video.play();
+        scene.systems["mindar-image-system"].start();
 
-        target.addEventListener("targetFound", () => {
-            btn.style.display = "block";
-            video.play();
+        // Target bulunduğunda/kaybolduğunda ses yönetimi
+        const targetEntity = document.querySelector('#target-entity');
+        targetEntity.addEventListener("targetFound", () => {
+          video.muted = false; // Bulduğunda sesi aç (isteğe bağlı)
+          document.getElementById('loading-msg').style.display = 'none';
         });
-
-        target.addEventListener("targetLost", () => {
-            btn.style.display = "none";
-            video.pause();
+        targetEntity.addEventListener("targetLost", () => {
+          document.getElementById('loading-msg').style.display = 'block';
         });
+      }
     </script>
-</body>
+  </body>
 </html>
